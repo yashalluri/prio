@@ -80,9 +80,10 @@ export function ChatMessage({
       )}
       <div
         className={cn(
-          "max-w-[85%] space-y-2",
+          "min-w-0 max-w-[85%] space-y-2",
           isUser ? "items-end" : "items-start"
         )}
+        style={{ overflowWrap: "break-word", wordBreak: "break-word" }}
       >
         {message.parts.map((part, i) => {
           if (part.type === "text") {
@@ -99,13 +100,23 @@ export function ChatMessage({
 
             const isLastText = !isUser && isStreaming && i === lastTextIndex;
 
+            // During active streaming, render plain text with whitespace
+            // to avoid expensive markdown re-parsing on every token
+            if (isLastText) {
+              return (
+                <div
+                  key={i}
+                  className="text-foreground streaming-cursor whitespace-pre-wrap text-sm leading-relaxed"
+                >
+                  {part.text}
+                </div>
+              );
+            }
+
             return (
               <div
                 key={i}
-                className={cn(
-                  "text-foreground text-sm leading-relaxed",
-                  isLastText && "streaming-cursor"
-                )}
+                className="text-foreground text-sm leading-relaxed"
               >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
@@ -147,7 +158,7 @@ export function ChatMessage({
                       <li className="text-sm leading-relaxed">{children}</li>
                     ),
                     table: ({ children }) => (
-                      <div className="border-border/50 my-3 overflow-hidden rounded-lg border">
+                      <div className="border-border/50 my-3 overflow-x-auto rounded-lg border">
                         <table className="w-full text-sm">{children}</table>
                       </div>
                     ),
@@ -163,7 +174,7 @@ export function ChatMessage({
                     ),
                     tr: ({ children }) => <tr>{children}</tr>,
                     th: ({ children }) => (
-                      <th className="text-muted-foreground px-3 py-2 text-left text-xs font-medium uppercase tracking-wider">
+                      <th className="text-muted-foreground whitespace-nowrap px-3 py-2 text-left text-xs font-semibold">
                         {children}
                       </th>
                     ),

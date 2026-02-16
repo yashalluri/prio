@@ -68,8 +68,11 @@ export function ChatInterface({
   const isLoading = status === "streaming" || status === "submitted";
 
   useEffect(() => {
-    scrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    // Use instant scroll during streaming to avoid animation queue buildup
+    scrollEndRef.current?.scrollIntoView({
+      behavior: isLoading ? "instant" : "smooth",
+    });
+  }, [messages, isLoading]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -110,7 +113,10 @@ export function ChatInterface({
         const { data } = await res.json();
         pendingMessageRef.current = text;
         setConvId(data.id);
-        router.replace(`/chat/${data.id}`, { scroll: false });
+        // Use history.replaceState to update URL without triggering
+        // a Next.js navigation that would unmount this component
+        // and lose the pendingMessageRef
+        window.history.replaceState(null, "", `/chat/${data.id}`);
         return;
       } catch {
         // Fall back to ephemeral chat
