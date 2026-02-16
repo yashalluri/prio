@@ -41,7 +41,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
 const navItems = [
-  { title: "Dashboard", href: "/", icon: LayoutDashboard },
+  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { title: "Chat", href: "/chat", icon: MessageSquare },
   { title: "Briefs", href: "/briefs", icon: FileText },
   { title: "Settings", href: "/settings", icon: Settings },
@@ -95,7 +95,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/">
+              <Link href="/dashboard">
                 <div className="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Zap className="size-4" />
                 </div>
@@ -121,11 +121,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={
-                      item.href === "/"
-                        ? pathname === "/"
-                        : pathname.startsWith(item.href)
-                    }
+                    isActive={pathname.startsWith(item.href)}
                     tooltip={item.title}
                   >
                     <Link href={item.href}>
