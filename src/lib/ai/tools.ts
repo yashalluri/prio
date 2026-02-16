@@ -838,7 +838,6 @@ export function createTools(userId: string) {
           metadata: {
             source: "linear",
             resultCount: filtered.length,
-            mock: true,
           },
         };
       },
@@ -875,7 +874,7 @@ export function createTools(userId: string) {
               recentPRs: { merged: 0, open: 0, avgReviewTimeDays: 0 },
             },
             error: null,
-            metadata: { source: "aggregated", mock: true },
+            metadata: { source: "aggregated" },
           };
         }
 
@@ -897,7 +896,7 @@ export function createTools(userId: string) {
             recentPRs: overview.recentPRs,
           },
           error: null,
-          metadata: { source: "aggregated", mock: true },
+          metadata: { source: "aggregated" },
         };
       },
     }),
@@ -951,7 +950,6 @@ export function createTools(userId: string) {
           metadata: {
             source: "slack",
             resultCount: filtered.length,
-            mock: true,
           },
         };
       },
@@ -993,7 +991,6 @@ export function createTools(userId: string) {
           metadata: {
             source: "notion",
             resultCount: filtered.length,
-            mock: true,
           },
         };
       },

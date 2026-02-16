@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 import { ToolCall } from "./tool-call";
-import { Zap, User, Copy, Check } from "lucide-react";
+import { Zap, User, Copy, Check, Brain, ChevronRight } from "lucide-react";
 
 function CodeBlock({ language, code }: { language: string; code: string }) {
   const [copied, setCopied] = useState(false);
@@ -173,6 +173,45 @@ function StreamingMarkdown({ text, components }: { text: string; components: Rea
   );
 }
 
+function ReasoningBlock({ text, isStreaming }: { text: string; isStreaming: boolean }) {
+  const [expanded, setExpanded] = useState(isStreaming);
+
+  useEffect(() => {
+    if (!isStreaming) setExpanded(false);
+  }, [isStreaming]);
+
+  return (
+    <div className="my-2">
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-xs transition-colors"
+      >
+        <Brain className="size-3.5" />
+        <span className="font-medium">Opus reasoning</span>
+        <ChevronRight
+          className={cn(
+            "size-3 transition-transform",
+            expanded && "rotate-90"
+          )}
+        />
+      </button>
+      {expanded && (
+        <div
+          className={cn(
+            "bg-primary/5 mt-1.5 rounded-md border-l-2 px-3 py-2",
+            isStreaming ? "reasoning-active" : "border-primary/30"
+          )}
+        >
+          <pre className="text-muted-foreground max-h-48 overflow-y-auto whitespace-pre-wrap font-mono text-xs leading-relaxed">
+            {text}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function ChatMessage({
   message,
   isStreaming = false,
@@ -269,6 +308,16 @@ export function ChatMessage({
                 args={args}
                 result={state === "result" ? output : undefined}
                 state={state === "result" ? "result" : "call"}
+              />
+            );
+          }
+
+          if (part.type === "reasoning") {
+            return (
+              <ReasoningBlock
+                key={i}
+                text={(part as { type: string; text: string }).text}
+                isStreaming={isStreaming}
               />
             );
           }

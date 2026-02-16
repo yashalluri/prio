@@ -5,31 +5,31 @@ import { DefaultChatTransport } from "ai";
 import type { UIMessage } from "ai";
 import { useRef, useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Send, Loader2, Sparkles, Square } from "lucide-react";
+import { Send, Loader2, Sparkles, Square, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatMessage } from "./message";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const promptStarters = [
   {
-    label: "Prioritize my backlog",
+    label: "Strategic trade-off analysis",
     prompt:
-      "Analyze my current backlog and help me prioritize using the RICE framework. What should we focus on this sprint?",
+      "Should we prioritize SSO or onboarding? Analyze the trade-offs across all data sources — Linear issues, Slack feedback, Notion docs — and give me a RICE-scored recommendation.",
   },
   {
-    label: "Summarize recent feedback",
+    label: "Find the hidden risks",
     prompt:
-      "Search Slack for recent customer feedback and summarize the key themes. What are customers asking for most?",
+      "What's the biggest risk to our Q1 plan that nobody's talking about? Cross-reference our issue tracker, team discussions, and roadmap to find blind spots.",
   },
   {
-    label: "Draft a PRD",
+    label: "Full team health check",
     prompt:
-      "Help me draft a PRD for our most requested feature. Pull in relevant context from our docs and issues.",
+      "Give me a comprehensive health check across all product areas. Which teams are on track and which are at risk? Show me the evidence.",
   },
   {
-    label: "Sprint health check",
+    label: "Generate strategic brief",
     prompt:
-      "Give me an overview of our current sprint. What's on track, what's blocked, and what needs attention?",
+      "Draft a strategic brief for leadership on our Q1 progress. Include data from all sources, flag the top 3 risks, and recommend specific actions.",
   },
 ];
 
@@ -173,9 +173,9 @@ export function ChatInterface({
               messages.length > 0 &&
               messages[messages.length - 1]?.role === "user" && (
                 <div className="flex items-center gap-2 py-4">
-                  <Loader2 className="text-muted-foreground size-4 animate-spin" />
+                  <Brain className="text-primary size-4 animate-pulse" />
                   <span className="text-muted-foreground text-sm">
-                    Prio is thinking...
+                    Reasoning...
                   </span>
                 </div>
               )}
@@ -253,8 +253,8 @@ export function ChatInterface({
           </Button>
         </form>
         <p className="text-muted-foreground mt-2 text-center text-xs">
-          Prio uses mock data for now. Connect your tools in Settings for real
-          insights.
+          Powered by Claude Opus 4.6 — Adaptive reasoning across your product
+          stack.
         </p>
       </div>
     </div>

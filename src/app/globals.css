@@ -159,3 +159,12 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
+
+@keyframes reasoning-pulse {
+  0%, 100% { border-color: oklch(0.6 0.2 265 / 0.3); }
+  50% { border-color: oklch(0.6 0.2 265 / 0.8); }
+}
+
+.reasoning-active {
+  animation: reasoning-pulse 2s ease-in-out infinite;
+}

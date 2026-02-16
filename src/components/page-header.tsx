@@ -69,6 +69,7 @@ export function PageHeader() {
             <button
               type="button"
               className="ring-ring flex items-center gap-2 rounded-full outline-none focus-visible:ring-2"
+              suppressHydrationWarning
             >
               <Avatar className="size-7">
                 <AvatarImage src={user?.user_metadata?.avatar_url} />
