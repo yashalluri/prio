@@ -3,7 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useRef, useEffect, useState } from "react";
-import { Send, Loader2, Sparkles } from "lucide-react";
+import { Send, Loader2, Sparkles, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatMessage } from "./message";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -36,17 +36,15 @@ const transport = new DefaultChatTransport({
 });
 
 export function ChatInterface() {
-  const { messages, sendMessage, status } = useChat({ transport });
+  const { messages, sendMessage, status, stop, error } = useChat({ transport });
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = useState("");
   const isLoading = status === "streaming" || status === "submitted";
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    scrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
@@ -61,7 +59,7 @@ export function ChatInterface() {
 
   return (
     <div className="flex h-full flex-col">
-      <ScrollArea className="flex-1 px-4" ref={scrollRef}>
+      <ScrollArea className="flex-1 px-4">
         {messages.length === 0 ? (
           <div className="flex h-full min-h-[60vh] flex-col items-center justify-center gap-6">
             <div className="flex flex-col items-center gap-3">
@@ -91,8 +89,16 @@ export function ChatInterface() {
           </div>
         ) : (
           <div className="mx-auto max-w-3xl py-4">
-            {messages.map((message) => (
-              <ChatMessage key={message.id} message={message} />
+            {messages.map((message, index) => (
+              <ChatMessage
+                key={message.id}
+                message={message}
+                isStreaming={
+                  status === "streaming" &&
+                  index === messages.length - 1 &&
+                  message.role === "assistant"
+                }
+              />
             ))}
             {isLoading &&
               messages.length > 0 &&
@@ -104,6 +110,33 @@ export function ChatInterface() {
                   </span>
                 </div>
               )}
+            {status === "error" && (
+              <div className="border-destructive/50 bg-destructive/10 my-2 flex items-center gap-3 rounded-lg border px-4 py-3">
+                <span className="text-destructive flex-1 text-sm">
+                  {error?.message || "Something went wrong. Please try again."}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const lastUserMsg = [...messages]
+                      .reverse()
+                      .find((m) => m.role === "user");
+                    const text = lastUserMsg?.parts
+                      .filter(
+                        (p): p is Extract<typeof p, { type: "text" }> =>
+                          p.type === "text"
+                      )
+                      .map((p) => p.text)
+                      .join(" ");
+                    if (text) handleSend(text);
+                  }}
+                >
+                  Retry
+                </Button>
+              </div>
+            )}
+            <div ref={scrollEndRef} />
           </div>
         )}
       </ScrollArea>
@@ -136,13 +169,15 @@ export function ChatInterface() {
             }}
           />
           <Button
-            type="submit"
+            type={isLoading ? "button" : "submit"}
             size="icon"
-            disabled={!input.trim() || isLoading}
+            variant={isLoading ? "outline" : "default"}
+            disabled={!isLoading && !input.trim()}
+            onClick={isLoading ? () => stop() : undefined}
             className="size-8 shrink-0 rounded-lg"
           >
             {isLoading ? (
-              <Loader2 className="size-4 animate-spin" />
+              <Square className="size-3.5" />
             ) : (
               <Send className="size-4" />
             )}

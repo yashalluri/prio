@@ -1,5 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FileText, MessageSquare } from "lucide-react";
+import Link from "next/link";
 
 export default function BriefsPage() {
   return (
@@ -15,13 +17,23 @@ export default function BriefsPage() {
 
       <div className="grid gap-4">
         <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <p className="text-muted-foreground mb-2 text-sm">
-              No briefs yet.
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <div className="bg-muted mb-4 flex size-12 items-center justify-center rounded-xl">
+              <FileText className="text-muted-foreground size-6" />
+            </div>
+            <p className="text-foreground mb-1 text-sm font-medium">
+              No briefs yet
             </p>
-            <p className="text-muted-foreground text-xs">
-              Ask Prio to analyze your backlog or generate a PRD in the Chat.
+            <p className="text-muted-foreground mb-6 max-w-sm text-center text-xs">
+              Ask Prio to analyze your backlog, prioritize features, or draft a
+              PRD. Briefs will appear here automatically.
             </p>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/chat">
+                <MessageSquare className="mr-2 size-3.5" />
+                Start a conversation
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

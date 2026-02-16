@@ -1,19 +1,75 @@
 "use client";
 
+import { useState } from "react";
 import type { UIMessage } from "ai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 import { ToolCall } from "./tool-call";
-import { Zap, User } from "lucide-react";
+import { Zap, User, Copy, Check } from "lucide-react";
 
-export function ChatMessage({ message }: { message: UIMessage }) {
+function CodeBlock({ language, code }: { language: string; code: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="bg-muted/50 border-border/50 my-3 overflow-hidden rounded-lg border">
+      <div className="border-border/50 flex items-center justify-between border-b px-3 py-1.5">
+        <span className="text-muted-foreground text-xs font-medium">
+          {language || "code"}
+        </span>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs transition-colors"
+        >
+          {copied ? (
+            <Check className="size-3" />
+          ) : (
+            <Copy className="size-3" />
+          )}
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+      <pre className="overflow-x-auto p-3">
+        <code className="block font-mono text-xs">{code}</code>
+      </pre>
+    </div>
+  );
+}
+
+export function ChatMessage({
+  message,
+  isStreaming = false,
+}: {
+  message: UIMessage;
+  isStreaming?: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
   const isUser = message.role === "user";
+
+  const handleCopyMessage = () => {
+    const text = message.parts
+      .filter((p): p is Extract<typeof p, { type: "text" }> => p.type === "text")
+      .map((p) => p.text)
+      .join("\n\n");
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const textParts = message.parts.filter((p) => p.type === "text");
+  const lastTextIndex = message.parts.lastIndexOf(textParts[textParts.length - 1]);
 
   return (
     <div
       className={cn(
-        "flex gap-3 py-4",
+        "group flex gap-3 py-4",
         isUser ? "justify-end" : "justify-start"
       )}
     >
@@ -41,8 +97,16 @@ export function ChatMessage({ message }: { message: UIMessage }) {
               );
             }
 
+            const isLastText = !isUser && isStreaming && i === lastTextIndex;
+
             return (
-              <div key={i} className="text-foreground text-sm leading-relaxed">
+              <div
+                key={i}
+                className={cn(
+                  "text-foreground text-sm leading-relaxed",
+                  isLastText && "streaming-cursor"
+                )}
+              >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -115,17 +179,11 @@ export function ChatMessage({ message }: { message: UIMessage }) {
                           </code>
                         );
                       }
-                      return (
-                        <code className="block font-mono text-xs">
-                          {children}
-                        </code>
-                      );
+                      const language = className?.replace("language-", "") || "";
+                      const codeString = String(children).replace(/\n$/, "");
+                      return <CodeBlock language={language} code={codeString} />;
                     },
-                    pre: ({ children }) => (
-                      <pre className="bg-muted/50 border-border/50 my-3 overflow-x-auto rounded-lg border p-3">
-                        {children}
-                      </pre>
-                    ),
+                    pre: ({ children }) => <>{children}</>,
                     hr: () => (
                       <hr className="border-border/50 my-4" />
                     ),
@@ -172,6 +230,20 @@ export function ChatMessage({ message }: { message: UIMessage }) {
 
           return null;
         })}
+        {!isUser && (
+          <button
+            type="button"
+            onClick={handleCopyMessage}
+            className="text-muted-foreground hover:text-foreground mt-1 flex items-center gap-1 text-xs opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            {copied ? (
+              <Check className="size-3" />
+            ) : (
+              <Copy className="size-3" />
+            )}
+            {copied ? "Copied!" : "Copy"}
+          </button>
+        )}
       </div>
       {isUser && (
         <div className="bg-muted flex size-7 shrink-0 items-center justify-center rounded-lg">

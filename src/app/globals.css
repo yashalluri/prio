@@ -121,6 +121,22 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: oklch(1 0 0 / 10%) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: oklch(1 0 0 / 10%);
+    border-radius: 3px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: oklch(1 0 0 / 18%);
   }
   body {
     @apply bg-background text-foreground;
@@ -128,4 +144,18 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display), sans-serif;
   }
+}
+
+@layer utilities {
+  .streaming-cursor::after {
+    content: "▍";
+    animation: cursor-blink 1s steps(2) infinite;
+    color: currentColor;
+    margin-left: 1px;
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
