@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Triangle, FileText, Hash, GitBranch } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import type { LucideIcon } from "lucide-react";
 
 const integrations: {
@@ -52,6 +53,21 @@ export function SettingsContent({
   connectedProviders: string[];
 }) {
   const router = useRouter();
+
+  const handleConnect = async (provider: string) => {
+    if (provider === "GITHUB") {
+      const supabase = createClient();
+      await supabase.auth.linkIdentity({
+        provider: "github",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/settings`,
+          scopes: "repo read:user",
+        },
+      });
+      return;
+    }
+    toast.info(`${provider} OAuth flow coming soon.`);
+  };
 
   const handleDisconnect = async (provider: string) => {
     await fetch(`/api/connections/${provider.toLowerCase()}`, {
@@ -107,13 +123,7 @@ export function SettingsContent({
                   ) : (
                     <Button
                       size="sm"
-                      onClick={() =>
-                        toast.info(
-                          integration.provider === "GITHUB"
-                            ? "GitHub connects automatically when you sign in. Sign out and sign back in to reconnect."
-                            : `${integration.name} OAuth flow coming soon.`
-                        )
-                      }
+                      onClick={() => handleConnect(integration.provider)}
                     >
                       Connect
                     </Button>
