@@ -143,7 +143,7 @@ export function ChatInterface({
                 help you decide what to build next.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {promptStarters.map((starter) => (
                 <button
                   key={starter.label}

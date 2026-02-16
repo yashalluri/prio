@@ -14,6 +14,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { IssuesByAreaChart } from "@/components/dashboard/issues-by-area-chart";
+import { TeamWorkloadChart } from "@/components/dashboard/team-workload-chart";
+import { VelocityChart } from "@/components/dashboard/velocity-chart";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -113,6 +116,13 @@ export default async function DashboardPage() {
           </Card>
         ))}
       </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <IssuesByAreaChart />
+        <TeamWorkloadChart />
+      </div>
+
+      <VelocityChart />
 
       <Card className="flex-1">
         <CardHeader>
