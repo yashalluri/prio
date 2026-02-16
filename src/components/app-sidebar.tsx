@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
@@ -10,6 +10,7 @@ import {
   Settings,
   Zap,
   Plus,
+  Trash2,
 } from "lucide-react";
 import {
   Sidebar,
@@ -19,10 +20,22 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
 } from "@/components/ui/sidebar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
@@ -42,6 +55,7 @@ interface ConversationItem {
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
 
@@ -56,6 +70,14 @@ export function AppSidebar() {
       .then(({ data }) => setConversations(data || []))
       .catch(() => {});
   }, [pathname]);
+
+  const handleDelete = async (id: string) => {
+    await fetch(`/api/conversations/${id}`, { method: "DELETE" });
+    setConversations((prev) => prev.filter((c) => c.id !== id));
+    if (pathname === `/chat/${id}`) {
+      router.push("/chat");
+    }
+  };
 
   const initials =
     user?.user_metadata?.full_name
@@ -141,6 +163,30 @@ export function AppSidebar() {
                       <span className="truncate">{conv.title}</span>
                     </Link>
                   </SidebarMenuButton>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <SidebarMenuAction showOnHover>
+                        <Trash2 className="size-3.5" />
+                      </SidebarMenuAction>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete conversation?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete this conversation. This
+                          action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDelete(conv.id)}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

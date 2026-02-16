@@ -62,3 +62,25 @@ export async function PATCH(
 
   return Response.json({ data: conversation });
 }
+
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  await prisma.conversation.deleteMany({
+    where: { id, userId: user.id },
+  });
+
+  return Response.json({ data: { deleted: true } });
+}

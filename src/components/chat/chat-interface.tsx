@@ -63,6 +63,7 @@ export function ChatInterface({
   const scrollEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const prevStatus = useRef(status);
+  const pendingMessageRef = useRef<string | null>(null);
   const [input, setInput] = useState("");
   const isLoading = status === "streaming" || status === "submitted";
 
@@ -86,12 +87,20 @@ export function ChatInterface({
     prevStatus.current = status;
   }, [status, convId, messages]);
 
+  // Send pending message after transport rebuilds with new convId
+  useEffect(() => {
+    if (convId && pendingMessageRef.current) {
+      const text = pendingMessageRef.current;
+      pendingMessageRef.current = null;
+      sendMessage({ text });
+    }
+  }, [convId, sendMessage]);
+
   const handleSend = async (text: string) => {
     if (!text.trim() || isLoading) return;
     setInput("");
 
-    let currentConvId = convId;
-    if (!currentConvId) {
+    if (!convId) {
       try {
         const res = await fetch("/api/conversations", {
           method: "POST",
@@ -99,9 +108,10 @@ export function ChatInterface({
           body: JSON.stringify({ title: text.slice(0, 80) }),
         });
         const { data } = await res.json();
-        currentConvId = data.id;
-        setConvId(currentConvId);
-        router.replace(`/chat/${currentConvId}`, { scroll: false });
+        pendingMessageRef.current = text;
+        setConvId(data.id);
+        router.replace(`/chat/${data.id}`, { scroll: false });
+        return;
       } catch {
         // Fall back to ephemeral chat
       }
