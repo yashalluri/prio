@@ -17,6 +17,8 @@ import { redirect } from "next/navigation";
 import { IssuesByAreaChart } from "@/components/dashboard/issues-by-area-chart";
 import { TeamWorkloadChart } from "@/components/dashboard/team-workload-chart";
 import { VelocityChart } from "@/components/dashboard/velocity-chart";
+import { DailyDigestCard } from "@/components/dashboard/daily-digest";
+import { generateDailyDigest } from "@/lib/ai/digest";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -50,6 +52,8 @@ export default async function DashboardPage() {
     briefsByStatus.find((b) => b.status === "DRAFT")?._count ?? 0;
   const publishedCount =
     briefsByStatus.find((b) => b.status === "PUBLISHED")?._count ?? 0;
+
+  const digest = generateDailyDigest();
 
   const stats = [
     {
@@ -92,6 +96,8 @@ export default async function DashboardPage() {
           Your product overview at a glance.
         </p>
       </div>
+
+      <DailyDigestCard digest={digest} />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (

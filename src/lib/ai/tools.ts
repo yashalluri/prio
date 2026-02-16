@@ -6,7 +6,7 @@ import { getGitHubClient } from "@/lib/integrations/get-github-client";
 // Mock data: Interconnected product team narrative (Feb 2026)
 // ---------------------------------------------------------------------------
 
-const MOCK_LINEAR_ISSUES = [
+export const MOCK_LINEAR_ISSUES = [
   // --- Auth (6) ---
   {
     id: "PRD-142",
@@ -361,7 +361,7 @@ const MOCK_LINEAR_ISSUES = [
   },
 ];
 
-const MOCK_SLACK_MESSAGES = [
+export const MOCK_SLACK_MESSAGES = [
   // --- #product-feedback (4) ---
   {
     channel: "#product-feedback",
@@ -536,7 +536,7 @@ const MOCK_SLACK_MESSAGES = [
   },
 ];
 
-const MOCK_NOTION_DOCS = [
+export const MOCK_NOTION_DOCS = [
   {
     id: "notion-1",
     title: "PRD: Enterprise SSO Integration",
@@ -659,7 +659,7 @@ const MOCK_NOTION_DOCS = [
   },
 ];
 
-const MOCK_AREA_OVERVIEWS: Record<
+export const MOCK_AREA_OVERVIEWS: Record<
   string,
   {
     issues: {
@@ -789,7 +789,7 @@ const MOCK_AREA_OVERVIEWS: Record<
   },
 };
 
-const MOCK_JIRA_ISSUES = [
+export const MOCK_JIRA_ISSUES = [
   // --- Auth / SSO (5) ---
   {
     key: "ENG-401",
