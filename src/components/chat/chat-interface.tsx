@@ -2,7 +2,9 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useRef, useEffect, useState } from "react";
+import type { UIMessage } from "ai";
+import { useRef, useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Send, Loader2, Sparkles, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatMessage } from "./message";
@@ -31,15 +33,36 @@ const promptStarters = [
   },
 ];
 
-const transport = new DefaultChatTransport({
-  api: "/api/chat",
-});
+interface ChatInterfaceProps {
+  conversationId?: string;
+  initialMessages?: UIMessage[];
+}
 
-export function ChatInterface() {
-  const { messages, sendMessage, status, stop, error } = useChat({ transport });
+export function ChatInterface({
+  conversationId: initialConvId,
+  initialMessages,
+}: ChatInterfaceProps) {
+  const router = useRouter();
+  const [convId, setConvId] = useState(initialConvId);
+
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: { conversationId: convId },
+      }),
+    [convId]
+  );
+
+  const { messages, sendMessage, status, stop, error } = useChat({
+    id: convId,
+    transport,
+    messages: initialMessages,
+  });
 
   const scrollEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const prevStatus = useRef(status);
   const [input, setInput] = useState("");
   const isLoading = status === "streaming" || status === "submitted";
 
@@ -51,9 +74,39 @@ export function ChatInterface() {
     inputRef.current?.focus();
   }, []);
 
+  // Save messages when stream completes
+  useEffect(() => {
+    if (prevStatus.current === "streaming" && status === "ready" && convId && messages.length > 0) {
+      fetch(`/api/conversations/${convId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages }),
+      }).catch(() => {});
+    }
+    prevStatus.current = status;
+  }, [status, convId, messages]);
+
   const handleSend = async (text: string) => {
     if (!text.trim() || isLoading) return;
     setInput("");
+
+    let currentConvId = convId;
+    if (!currentConvId) {
+      try {
+        const res = await fetch("/api/conversations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: text.slice(0, 80) }),
+        });
+        const { data } = await res.json();
+        currentConvId = data.id;
+        setConvId(currentConvId);
+        router.replace(`/chat/${currentConvId}`, { scroll: false });
+      } catch {
+        // Fall back to ephemeral chat
+      }
+    }
+
     await sendMessage({ text });
   };
 

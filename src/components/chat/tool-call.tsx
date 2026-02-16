@@ -9,6 +9,7 @@ const toolLabels: Record<string, string> = {
   getProductAreaOverview: "Getting product area overview",
   searchSlackMessages: "Searching Slack messages",
   searchNotionDocs: "Searching Notion docs",
+  generateBrief: "Generating brief",
 };
 
 export function ToolCall({

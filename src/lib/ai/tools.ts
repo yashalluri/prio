@@ -283,4 +283,36 @@ export const tools = {
       };
     },
   }),
+
+  generateBrief: tool({
+    description:
+      "Generate and save a structured product brief (PRD, analysis, or recommendation). Use this when the user asks you to draft a PRD, create a brief, write up an analysis, or save your findings as a document.",
+    inputSchema: z.object({
+      title: z
+        .string()
+        .describe("Brief title (e.g., 'SSO Integration PRD')"),
+      content: z.object({
+        summary: z.string().describe("Executive summary (2-3 sentences)"),
+        sections: z
+          .array(
+            z.object({
+              heading: z.string(),
+              body: z.string().describe("Markdown-formatted section content"),
+            })
+          )
+          .describe("Main content sections"),
+        recommendations: z
+          .array(z.string())
+          .optional()
+          .describe("Key recommendations or next steps"),
+      }),
+    }),
+    execute: async ({ title, content }) => {
+      return {
+        data: { title, content, savedAt: new Date().toISOString() },
+        error: null,
+        metadata: { source: "prio", type: "brief" },
+      };
+    },
+  }),
 };
