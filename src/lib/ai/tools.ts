@@ -789,6 +789,289 @@ const MOCK_AREA_OVERVIEWS: Record<
   },
 };
 
+const MOCK_JIRA_ISSUES = [
+  // --- Auth / SSO (5) ---
+  {
+    key: "ENG-401",
+    summary: "Epic: Enterprise SSO (SAML + OIDC)",
+    status: "In Progress",
+    priority: "Highest",
+    type: "Epic",
+    assignee: "Sarah Chen",
+    labels: ["enterprise", "auth"],
+    project: "ENG",
+    sprint: "Sprint 4",
+    storyPoints: 21,
+    createdAt: "2026-01-18",
+    blockedBy: "Blocked — Okta SAML API credentials not received (13 days waiting)",
+    url: "https://mycompany.atlassian.net/browse/ENG-401",
+  },
+  {
+    key: "ENG-415",
+    summary: "Implement SAML 2.0 assertion validation",
+    status: "In Progress",
+    priority: "Highest",
+    type: "Story",
+    assignee: "Sarah Chen",
+    labels: ["auth", "security"],
+    project: "ENG",
+    sprint: "Sprint 4",
+    storyPoints: 5,
+    createdAt: "2026-02-01",
+    blockedBy: "Blocked by ENG-401 — needs Okta credentials first",
+    url: "https://mycompany.atlassian.net/browse/ENG-415",
+  },
+  {
+    key: "ENG-422",
+    summary: "OIDC provider configuration UI",
+    status: "To Do",
+    priority: "High",
+    type: "Story",
+    assignee: "Priya Patel",
+    labels: ["auth", "frontend"],
+    project: "ENG",
+    sprint: "Sprint 5",
+    storyPoints: 5,
+    createdAt: "2026-02-03",
+    blockedBy: "Depends on ENG-415 SAML validation",
+    url: "https://mycompany.atlassian.net/browse/ENG-422",
+  },
+  {
+    key: "ENG-428",
+    summary: "SSO session management and token refresh",
+    status: "Backlog",
+    priority: "High",
+    type: "Story",
+    assignee: null,
+    labels: ["auth", "security"],
+    project: "ENG",
+    sprint: null,
+    storyPoints: 8,
+    createdAt: "2026-02-05",
+    url: "https://mycompany.atlassian.net/browse/ENG-428",
+  },
+  {
+    key: "ENG-446",
+    summary: "Fix OAuth redirect loop on mobile Safari",
+    status: "Done",
+    priority: "High",
+    type: "Bug",
+    assignee: "Priya Patel",
+    labels: ["auth", "mobile"],
+    project: "ENG",
+    sprint: "Sprint 3",
+    storyPoints: 2,
+    createdAt: "2026-01-28",
+    url: "https://mycompany.atlassian.net/browse/ENG-446",
+  },
+
+  // --- Billing / API (6) --- James Wright overloaded
+  {
+    key: "ENG-389",
+    summary: "API rate limiting for free tier",
+    status: "In Progress",
+    priority: "High",
+    type: "Story",
+    assignee: "James Wright",
+    labels: ["api", "billing"],
+    project: "ENG",
+    sprint: "Sprint 2",
+    storyPoints: 5,
+    createdAt: "2026-01-05",
+    blockedBy: "Overdue — started 6 weeks ago, no PR submitted",
+    url: "https://mycompany.atlassian.net/browse/ENG-389",
+  },
+  {
+    key: "ENG-445",
+    summary: "Fix incorrect proration on plan upgrades",
+    status: "To Do",
+    priority: "Highest",
+    type: "Bug",
+    assignee: "James Wright",
+    labels: ["billing"],
+    project: "ENG",
+    sprint: "Sprint 4",
+    storyPoints: 3,
+    createdAt: "2026-02-08",
+    url: "https://mycompany.atlassian.net/browse/ENG-445",
+  },
+  {
+    key: "ENG-447",
+    summary: "Pricing page showing stale cached prices",
+    status: "To Do",
+    priority: "High",
+    type: "Bug",
+    assignee: "James Wright",
+    labels: ["billing", "frontend"],
+    project: "ENG",
+    sprint: "Sprint 4",
+    storyPoints: 2,
+    createdAt: "2026-02-08",
+    url: "https://mycompany.atlassian.net/browse/ENG-447",
+  },
+  {
+    key: "ENG-448",
+    summary: "Stripe webhook handler dropping events under load",
+    status: "To Do",
+    priority: "High",
+    type: "Bug",
+    assignee: "James Wright",
+    labels: ["billing", "infrastructure"],
+    project: "ENG",
+    sprint: "Sprint 4",
+    storyPoints: 5,
+    createdAt: "2026-02-08",
+    url: "https://mycompany.atlassian.net/browse/ENG-448",
+  },
+  {
+    key: "ENG-438",
+    summary: "Implement billing tier detection for rate limits",
+    status: "To Do",
+    priority: "High",
+    type: "Story",
+    assignee: "James Wright",
+    labels: ["api", "billing"],
+    project: "ENG",
+    sprint: "Sprint 5",
+    storyPoints: 5,
+    createdAt: "2026-02-01",
+    blockedBy: "Depends on ENG-389 rate limiting",
+    url: "https://mycompany.atlassian.net/browse/ENG-438",
+  },
+  {
+    key: "ENG-449",
+    summary: "API versioning strategy (v2 migration path)",
+    status: "To Do",
+    priority: "High",
+    type: "Story",
+    assignee: "James Wright",
+    labels: ["api", "infrastructure"],
+    project: "ENG",
+    sprint: "Sprint 5",
+    storyPoints: 8,
+    createdAt: "2026-02-01",
+    url: "https://mycompany.atlassian.net/browse/ENG-449",
+  },
+
+  // --- Performance (3) ---
+  {
+    key: "ENG-412",
+    summary: "Dashboard loading time exceeds 3s on mobile",
+    status: "Done",
+    priority: "High",
+    type: "Bug",
+    assignee: "Alex Kim",
+    labels: ["performance", "mobile"],
+    project: "ENG",
+    sprint: "Sprint 3",
+    storyPoints: 5,
+    createdAt: "2026-01-22",
+    url: "https://mycompany.atlassian.net/browse/ENG-412",
+  },
+  {
+    key: "ENG-432",
+    summary: "Optimize GraphQL query batching for dashboard",
+    status: "In Progress",
+    priority: "Medium",
+    type: "Task",
+    assignee: "Alex Kim",
+    labels: ["performance", "api"],
+    project: "ENG",
+    sprint: "Sprint 4",
+    storyPoints: 3,
+    createdAt: "2026-02-05",
+    url: "https://mycompany.atlassian.net/browse/ENG-432",
+  },
+  {
+    key: "ENG-440",
+    summary: "Lazy-load chart components on dashboard",
+    status: "To Do",
+    priority: "Medium",
+    type: "Task",
+    assignee: "Alex Kim",
+    labels: ["performance", "frontend"],
+    project: "ENG",
+    sprint: "Sprint 5",
+    storyPoints: 2,
+    createdAt: "2026-02-10",
+    url: "https://mycompany.atlassian.net/browse/ENG-440",
+  },
+
+  // --- Onboarding (3) ---
+  {
+    key: "ENG-430",
+    summary: "User onboarding flow redesign",
+    status: "In Progress",
+    priority: "High",
+    type: "Story",
+    assignee: "Maria Lopez",
+    labels: ["ux", "growth"],
+    project: "ENG",
+    sprint: "Sprint 4",
+    storyPoints: 13,
+    createdAt: "2026-01-10",
+    url: "https://mycompany.atlassian.net/browse/ENG-430",
+  },
+  {
+    key: "ENG-435",
+    summary: "Add pre-built templates for new workspaces",
+    status: "To Do",
+    priority: "Medium",
+    type: "Story",
+    assignee: "Maria Lopez",
+    labels: ["onboarding", "content"],
+    project: "ENG",
+    sprint: "Sprint 5",
+    storyPoints: 5,
+    createdAt: "2026-01-25",
+    url: "https://mycompany.atlassian.net/browse/ENG-435",
+  },
+  {
+    key: "ENG-436",
+    summary: "Interactive product tour with guided tooltips",
+    status: "To Do",
+    priority: "Medium",
+    type: "Story",
+    assignee: "Priya Patel",
+    labels: ["onboarding", "frontend"],
+    project: "ENG",
+    sprint: "Sprint 5",
+    storyPoints: 8,
+    createdAt: "2026-02-03",
+    url: "https://mycompany.atlassian.net/browse/ENG-436",
+  },
+
+  // --- Mobile (2) ---
+  {
+    key: "ENG-420",
+    summary: "Push notification delivery failing on Android 14",
+    status: "In Progress",
+    priority: "High",
+    type: "Bug",
+    assignee: "Alex Kim",
+    labels: ["mobile"],
+    project: "ENG",
+    sprint: "Sprint 4",
+    storyPoints: 3,
+    createdAt: "2026-01-24",
+    url: "https://mycompany.atlassian.net/browse/ENG-420",
+  },
+  {
+    key: "ENG-425",
+    summary: "Offline mode data sync conflicts",
+    status: "To Do",
+    priority: "High",
+    type: "Story",
+    assignee: "Alex Kim",
+    labels: ["mobile", "data"],
+    project: "ENG",
+    sprint: "Sprint 5",
+    storyPoints: 8,
+    createdAt: "2026-02-02",
+    url: "https://mycompany.atlassian.net/browse/ENG-425",
+  },
+];
+
 // ---------------------------------------------------------------------------
 // Tool definitions
 // ---------------------------------------------------------------------------
@@ -996,6 +1279,66 @@ export function createTools(userId: string) {
       },
     }),
 
+    searchJiraIssues: tool({
+      description:
+        "Search and filter Jira issues by status, assignee, type, or project. Returns issue keys, summaries, statuses, priorities, types, and assignees.",
+      inputSchema: z.object({
+        query: z.string().describe("Search query or keyword"),
+        status: z
+          .string()
+          .optional()
+          .describe(
+            "Filter by status (e.g. 'In Progress', 'To Do', 'Done', 'Backlog')"
+          ),
+        type: z
+          .enum(["Bug", "Story", "Task", "Epic", "all"])
+          .optional()
+          .default("all")
+          .describe("Filter by issue type"),
+        project: z.string().optional().describe("Filter by project key (e.g. 'ENG')"),
+        limit: z
+          .number()
+          .optional()
+          .default(10)
+          .describe("Max number of results"),
+      }),
+      execute: async ({ query, status, type, project, limit }) => {
+        const filtered = MOCK_JIRA_ISSUES.filter((issue) => {
+          if (status && issue.status.toLowerCase() !== status.toLowerCase())
+            return false;
+          if (type && type !== "all" && issue.type !== type) return false;
+          if (project && issue.project.toLowerCase() !== project.toLowerCase())
+            return false;
+          if (query) {
+            const q = query.toLowerCase();
+            const searchable = [
+              issue.summary,
+              issue.key,
+              issue.assignee ?? "",
+              ...issue.labels,
+              issue.project,
+              issue.type,
+              issue.sprint ?? "",
+              issue.blockedBy ?? "",
+            ]
+              .join(" ")
+              .toLowerCase();
+            if (!searchable.includes(q)) return false;
+          }
+          return true;
+        }).slice(0, limit);
+
+        return {
+          data: filtered,
+          error: null,
+          metadata: {
+            source: "jira",
+            resultCount: filtered.length,
+          },
+        };
+      },
+    }),
+
     generateBrief: tool({
       description:
         "Generate and save a structured product brief (PRD, analysis, or recommendation). Use this when the user asks you to draft a PRD, create a brief, write up an analysis, or save your findings as a document.",
@@ -1048,7 +1391,7 @@ export function createTools(userId: string) {
           .array(
             z.object({
               id: z.string().describe("Unique identifier, e.g. 'linear-prd-142'"),
-              source: z.enum(["linear", "slack", "notion", "github"]),
+              source: z.enum(["linear", "slack", "notion", "github", "jira"]),
               label: z.string().describe("Short label, e.g. 'PRD-142: SSO Support'"),
               detail: z
                 .string()

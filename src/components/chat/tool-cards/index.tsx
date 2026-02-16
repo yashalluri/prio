@@ -9,11 +9,13 @@ import { GitHubPRsCard } from "./github-prs-card";
 import { GitHubIssuesCard } from "./github-issues-card";
 import { GitHubCommitsCard } from "./github-commits-card";
 import { EvidenceGraphCard } from "./evidence-graph-card";
+import { JiraIssuesCard } from "./jira-issues-card";
 
 type ToolCardComponent = ComponentType<{ data: unknown }>;
 
 const registry: Record<string, ToolCardComponent> = {
   searchLinearIssues: LinearIssuesCard,
+  searchJiraIssues: JiraIssuesCard,
   getProductAreaOverview: AreaOverviewCard,
   searchSlackMessages: SlackMessagesCard,
   searchNotionDocs: NotionDocsCard,

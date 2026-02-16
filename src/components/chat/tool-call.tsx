@@ -16,6 +16,7 @@ const autoExpandTools = new Set(["synthesizeEvidence", "generateBrief"]);
 
 const toolLabels: Record<string, string> = {
   searchLinearIssues: "Searching Linear issues",
+  searchJiraIssues: "Searching Jira issues",
   getProductAreaOverview: "Getting product area overview",
   searchSlackMessages: "Searching Slack messages",
   searchNotionDocs: "Searching Notion docs",

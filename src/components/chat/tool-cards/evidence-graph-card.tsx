@@ -27,7 +27,7 @@ import {
 
 interface EvidenceItem {
   id: string;
-  source: "linear" | "slack" | "notion" | "github";
+  source: "linear" | "slack" | "notion" | "github" | "jira";
   label: string;
   detail: string;
   url: string;
@@ -67,6 +67,7 @@ const sourceConfig: Record<
   },
   notion: { color: "border-l-blue-500", icon: FileText, label: "Notion" },
   github: { color: "border-l-gray-400", icon: Github, label: "GitHub" },
+  jira: { color: "border-l-blue-400", icon: GitBranch, label: "Jira" },
 };
 
 const connectionColors: Record<string, string> = {
@@ -251,7 +252,7 @@ export function EvidenceGraphCard({ data }: { data: unknown }) {
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Split nodes into columns: Linear + GitHub on left, Slack + Notion on right
-  const leftSources = new Set(["linear", "github"]);
+  const leftSources = new Set(["linear", "github", "jira"]);
   const leftNodes = d.evidence.filter((n) => leftSources.has(n.source));
   const rightNodes = d.evidence.filter((n) => !leftSources.has(n.source));
   const leftIds = new Set(leftNodes.map((n) => n.id));
