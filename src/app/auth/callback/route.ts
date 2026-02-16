@@ -9,7 +9,8 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: exchangeData, error } =
+      await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
       // Sync Supabase auth user to our Prisma User table
@@ -32,6 +33,29 @@ export async function GET(request: Request) {
             image: user.user_metadata?.avatar_url ?? null,
           },
         });
+
+        // Capture GitHub provider token and save to Connection table
+        const providerToken = exchangeData.session?.provider_token;
+        if (providerToken) {
+          await prisma.connection.upsert({
+            where: {
+              userId_provider: { userId: user.id, provider: "GITHUB" },
+            },
+            update: {
+              accessToken: providerToken,
+              refreshToken:
+                exchangeData.session?.provider_refresh_token ?? null,
+            },
+            create: {
+              userId: user.id,
+              provider: "GITHUB",
+              accessToken: providerToken,
+              refreshToken:
+                exchangeData.session?.provider_refresh_token ?? null,
+              scopes: "repo,read:user",
+            },
+          });
+        }
       }
 
       const forwardedHost = request.headers.get("x-forwarded-host");

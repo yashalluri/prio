@@ -10,6 +10,10 @@ const toolLabels: Record<string, string> = {
   searchSlackMessages: "Searching Slack messages",
   searchNotionDocs: "Searching Notion docs",
   generateBrief: "Generating brief",
+  searchGitHubRepos: "Searching GitHub repos",
+  searchGitHubPRs: "Searching GitHub PRs",
+  searchGitHubIssues: "Searching GitHub issues",
+  getGitHubCommits: "Fetching GitHub commits",
 };
 
 export function ToolCall({
