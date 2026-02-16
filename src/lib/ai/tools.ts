@@ -28,6 +28,7 @@ export const tools = {
           assignee: "Sarah Chen",
           labels: ["enterprise", "auth"],
           estimate: 8,
+          url: "https://linear.app/prio/issue/PRD-142",
         },
         {
           id: "PRD-138",
@@ -37,6 +38,7 @@ export const tools = {
           assignee: "Alex Kim",
           labels: ["performance", "mobile"],
           estimate: 5,
+          url: "https://linear.app/prio/issue/PRD-138",
         },
         {
           id: "PRD-135",
@@ -46,6 +48,7 @@ export const tools = {
           assignee: null,
           labels: ["infrastructure"],
           estimate: 3,
+          url: "https://linear.app/prio/issue/PRD-135",
         },
         {
           id: "PRD-131",
@@ -55,6 +58,7 @@ export const tools = {
           assignee: "Maria Lopez",
           labels: ["ux", "growth"],
           estimate: 13,
+          url: "https://linear.app/prio/issue/PRD-131",
         },
         {
           id: "PRD-127",
@@ -64,6 +68,7 @@ export const tools = {
           assignee: null,
           labels: ["api", "billing"],
           estimate: 5,
+          url: "https://linear.app/prio/issue/PRD-127",
         },
       ];
 
@@ -112,11 +117,13 @@ export const tools = {
                 id: "PRD-142",
                 title: "SSO integration blocked on SAML provider response",
                 daysBlocked: 5,
+                url: "https://linear.app/prio/issue/PRD-142",
               },
               {
                 id: "PRD-139",
                 title: "Design approval pending for settings page",
                 daysBlocked: 3,
+                url: "https://linear.app/prio/issue/PRD-139",
               },
             ],
           },
@@ -177,6 +184,7 @@ export const tools = {
           timestamp: "2026-02-14T10:30:00Z",
           text: "Multiple enterprise customers asking about SSO. Acme Corp says it's a blocker for their renewal.",
           reactions: { "+1": 5, eyes: 2 },
+          url: "https://prio-team.slack.com/archives/C04FEEDBACK/p1707904200",
         },
         {
           channel: "#product-feedback",
@@ -184,6 +192,7 @@ export const tools = {
           timestamp: "2026-02-13T15:45:00Z",
           text: "Lost a deal with TechStart because onboarding took too long. They went with a competitor.",
           reactions: { disappointed: 3 },
+          url: "https://prio-team.slack.com/archives/C04FEEDBACK/p1707836700",
         },
         {
           channel: "#eng-general",
@@ -191,6 +200,7 @@ export const tools = {
           timestamp: "2026-02-12T09:00:00Z",
           text: "Dashboard performance fix is ready for review. Reduced load time from 3.2s to 1.1s on mobile.",
           reactions: { tada: 8, rocket: 3 },
+          url: "https://prio-team.slack.com/archives/C04ENGGEN/p1707725400",
         },
         {
           channel: "#product-decisions",
@@ -198,6 +208,7 @@ export const tools = {
           timestamp: "2026-02-11T14:00:00Z",
           text: "Decision: We're prioritizing SSO for Q1. Onboarding redesign moves to Q2.",
           reactions: { white_check_mark: 6 },
+          url: "https://prio-team.slack.com/archives/C04DECISIONS/p1707656400",
         },
       ];
 
@@ -234,6 +245,7 @@ export const tools = {
           excerpt:
             "Support SAML 2.0 and OIDC for enterprise customers. Target: 50+ seat accounts. Expected impact: 30% reduction in enterprise churn.",
           author: "Sarah Chen",
+          url: "https://notion.so/prio/Enterprise-SSO-PRD-a1b2c3d4",
         },
         {
           id: "notion-2",
@@ -243,6 +255,7 @@ export const tools = {
           excerpt:
             "Reduce time-to-value from 15 minutes to 3 minutes. Key changes: guided setup wizard, pre-built templates, interactive tutorial.",
           author: "Maria Lopez",
+          url: "https://notion.so/prio/Onboarding-Flow-v2-e5f6g7h8",
         },
         {
           id: "notion-3",
@@ -252,6 +265,7 @@ export const tools = {
           excerpt:
             "Agreed priorities: 1) SSO (enterprise retention), 2) Performance (mobile), 3) Onboarding (growth). API docs deferred to Q2.",
           author: "PM Lead",
+          url: "https://notion.so/prio/Q1-Planning-Notes-i9j0k1l2",
         },
       ];
 
