@@ -12,24 +12,24 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const promptStarters = [
   {
-    label: "Strategic trade-off analysis",
+    label: "Uncover the hidden blockers",
     prompt:
-      "Should we prioritize SSO or onboarding? Analyze the trade-offs across all data sources — Linear issues, Slack feedback, Notion docs — and give me a RICE-scored recommendation.",
+      "What's really blocking our Q1 goals right now? Search across Linear, Slack, and Notion to find the root causes. I want to see the full chain of dependencies — not just what's blocked, but WHY it's blocked and what downstream impact that's having on revenue and timelines.",
   },
   {
-    label: "Find the hidden risks",
+    label: "Who's the biggest risk on the team?",
     prompt:
-      "What's the biggest risk to our Q1 plan that nobody's talking about? Cross-reference our issue tracker, team discussions, and roadmap to find blind spots.",
+      "Which team member is the biggest delivery risk right now? Check issue assignments in Linear, look for concerning signals in Slack, and cross-reference with Notion meeting notes. Show me the evidence chain.",
   },
   {
-    label: "Full team health check",
+    label: "Revenue impact analysis",
     prompt:
-      "Give me a comprehensive health check across all product areas. Which teams are on track and which are at risk? Show me the evidence.",
+      "How much revenue is at risk right now due to engineering delays? Cross-reference our sales pipeline discussions in Slack with the actual state of engineering work in Linear, and check Notion for any context on priorities. I need hard numbers.",
   },
   {
-    label: "Generate strategic brief",
+    label: "Generate Q1 leadership brief",
     prompt:
-      "Draft a strategic brief for leadership on our Q1 progress. Include data from all sources, flag the top 3 risks, and recommend specific actions.",
+      "Draft a comprehensive Q1 leadership brief. Pull data from all sources — Linear for engineering status, Slack for team signals and customer feedback, and Notion for strategic context. Flag the top risks with evidence, quantify impact, and recommend specific actions. Save it as a brief.",
   },
 ];
 

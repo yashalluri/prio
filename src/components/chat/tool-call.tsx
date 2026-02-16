@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronDown,
   ChevronRight,
@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getToolCardRenderer, ToolCardRenderer } from "./tool-cards";
+
+// Tools that auto-expand their rich card when complete
+const autoExpandTools = new Set(["synthesizeEvidence", "generateBrief"]);
 
 const toolLabels: Record<string, string> = {
   searchLinearIssues: "Searching Linear issues",
@@ -21,6 +24,7 @@ const toolLabels: Record<string, string> = {
   searchGitHubPRs: "Searching GitHub PRs",
   searchGitHubIssues: "Searching GitHub issues",
   getGitHubCommits: "Fetching GitHub commits",
+  synthesizeEvidence: "Synthesizing evidence graph",
 };
 
 export function ToolCall({
@@ -38,6 +42,13 @@ export function ToolCall({
   const [showRaw, setShowRaw] = useState(false);
   const isComplete = state === "result";
   const label = toolLabels[toolName] ?? toolName;
+
+  // Auto-expand hero tool cards (evidence graph, brief) when result arrives
+  useEffect(() => {
+    if (isComplete && autoExpandTools.has(toolName)) {
+      setExpanded(true);
+    }
+  }, [isComplete, toolName]);
 
   const toolResult = result as
     | { data?: unknown; error?: string | null; metadata?: unknown }

@@ -300,14 +300,15 @@ export function ChatMessage({
             const args = (toolPart.input as Record<string, unknown>) ?? {};
             const state = toolPart.state as string;
             const output = toolPart.output as unknown;
+            const isResult = state === "output-available";
 
             return (
               <ToolCall
                 key={(toolPart.toolCallId as string) ?? i}
                 toolName={toolName}
                 args={args}
-                result={state === "result" ? output : undefined}
-                state={state === "result" ? "result" : "call"}
+                result={isResult ? output : undefined}
+                state={isResult ? "result" : "call"}
               />
             );
           }

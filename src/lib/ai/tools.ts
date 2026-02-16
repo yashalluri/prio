@@ -1032,6 +1032,65 @@ export function createTools(userId: string) {
       },
     }),
 
+    synthesizeEvidence: tool({
+      description:
+        "Synthesize cross-source evidence into a structured graph showing how findings connect. Call this AFTER gathering data from 2+ sources when you discover non-obvious patterns, cascading blockers, or hidden risk chains. The evidence graph will be rendered visually for the user.",
+      inputSchema: z.object({
+        title: z
+          .string()
+          .describe("Concise finding title, e.g. 'SSO Delay Threatening $360K Pipeline'"),
+        keyInsight: z
+          .string()
+          .describe(
+            "The non-obvious insight connecting the evidence — the thing a human PM might miss"
+          ),
+        evidence: z
+          .array(
+            z.object({
+              id: z.string().describe("Unique identifier, e.g. 'linear-prd-142'"),
+              source: z.enum(["linear", "slack", "notion", "github"]),
+              label: z.string().describe("Short label, e.g. 'PRD-142: SSO Support'"),
+              detail: z
+                .string()
+                .describe("Key detail, e.g. 'Blocked 13 days on Okta credentials'"),
+              url: z.string().describe("URL to the source item"),
+            })
+          )
+          .describe("Evidence items from different sources (4-8 items)"),
+        connections: z
+          .array(
+            z.object({
+              from: z.string().describe("Source evidence id"),
+              to: z.string().describe("Target evidence id"),
+              type: z.enum([
+                "blocks",
+                "references",
+                "contradicts",
+                "supports",
+                "caused_by",
+              ]),
+            })
+          )
+          .describe("Relationships between evidence items"),
+        impact: z.object({
+          revenue: z
+            .string()
+            .optional()
+            .describe("Revenue impact, e.g. '$360K pipeline at risk'"),
+          timeline: z
+            .string()
+            .optional()
+            .describe("Timeline impact, e.g. '3+ week delay'"),
+          risk: z.enum(["critical", "high", "medium", "low"]),
+        }),
+      }),
+      execute: async (input) => ({
+        data: input,
+        error: null,
+        metadata: { source: "prio", type: "evidence_synthesis" },
+      }),
+    }),
+
     // --- Real GitHub tools ---
 
     searchGitHubRepos: tool({

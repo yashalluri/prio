@@ -8,6 +8,7 @@ import { GitHubReposCard } from "./github-repos-card";
 import { GitHubPRsCard } from "./github-prs-card";
 import { GitHubIssuesCard } from "./github-issues-card";
 import { GitHubCommitsCard } from "./github-commits-card";
+import { EvidenceGraphCard } from "./evidence-graph-card";
 
 type ToolCardComponent = ComponentType<{ data: unknown }>;
 
@@ -21,6 +22,7 @@ const registry: Record<string, ToolCardComponent> = {
   searchGitHubPRs: GitHubPRsCard,
   searchGitHubIssues: GitHubIssuesCard,
   getGitHubCommits: GitHubCommitsCard,
+  synthesizeEvidence: EvidenceGraphCard,
 };
 
 export function getToolCardRenderer(
