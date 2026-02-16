@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { UIMessage } from "ai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -39,6 +39,136 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
       <pre className="overflow-x-auto p-3">
         <code className="block font-mono text-xs">{code}</code>
       </pre>
+    </div>
+  );
+}
+
+const markdownComponents: React.ComponentProps<typeof ReactMarkdown>["components"] = {
+  p: ({ children }) => (
+    <p className="mb-3 last:mb-0">{children}</p>
+  ),
+  strong: ({ children }) => (
+    <strong className="text-foreground font-semibold">
+      {children}
+    </strong>
+  ),
+  h1: ({ children }) => (
+    <h1 className="font-heading mb-2 mt-4 text-base font-bold first:mt-0">
+      {children}
+    </h1>
+  ),
+  h2: ({ children }) => (
+    <h2 className="font-heading mb-2 mt-4 text-sm font-bold first:mt-0">
+      {children}
+    </h2>
+  ),
+  h3: ({ children }) => (
+    <h3 className="font-heading mb-1.5 mt-3 text-sm font-semibold first:mt-0">
+      {children}
+    </h3>
+  ),
+  ul: ({ children }) => (
+    <ul className="mb-3 ml-4 list-disc space-y-1 last:mb-0">
+      {children}
+    </ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="mb-3 ml-4 list-decimal space-y-1 last:mb-0">
+      {children}
+    </ol>
+  ),
+  li: ({ children }) => (
+    <li className="text-sm leading-relaxed">{children}</li>
+  ),
+  table: ({ children }) => (
+    <div className="border-border/50 my-3 overflow-x-auto rounded-lg border">
+      <table className="w-full text-sm">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => (
+    <thead className="bg-muted/50 border-border/50 border-b">
+      {children}
+    </thead>
+  ),
+  tbody: ({ children }) => (
+    <tbody className="divide-border/30 divide-y">
+      {children}
+    </tbody>
+  ),
+  tr: ({ children }) => <tr>{children}</tr>,
+  th: ({ children }) => (
+    <th className="text-muted-foreground whitespace-nowrap px-3 py-2 text-left text-xs font-semibold">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="px-3 py-2 text-sm">{children}</td>
+  ),
+  code: ({ children, className }) => {
+    const isInline = !className;
+    if (isInline) {
+      return (
+        <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">
+          {children}
+        </code>
+      );
+    }
+    const language = className?.replace("language-", "") || "";
+    const codeString = String(children).replace(/\n$/, "");
+    return <CodeBlock language={language} code={codeString} />;
+  },
+  pre: ({ children }) => <>{children}</>,
+  hr: () => (
+    <hr className="border-border/50 my-4" />
+  ),
+  a: ({ href, children }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-primary hover:text-primary/80 underline decoration-primary/30 underline-offset-2 transition-colors hover:decoration-primary/60"
+    >
+      {children}
+    </a>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="border-primary/30 my-3 border-l-2 pl-3 text-sm italic">
+      {children}
+    </blockquote>
+  ),
+};
+
+function StreamingMarkdown({ text, components }: { text: string; components: React.ComponentProps<typeof ReactMarkdown>["components"] }) {
+  const [rendered, setRendered] = useState(text);
+  const lastUpdate = useRef(0);
+  const pending = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const now = Date.now();
+    const THROTTLE_MS = 150;
+    if (now - lastUpdate.current >= THROTTLE_MS) {
+      lastUpdate.current = now;
+      setRendered(text);
+    } else if (!pending.current) {
+      pending.current = setTimeout(() => {
+        lastUpdate.current = Date.now();
+        setRendered(text);
+        pending.current = null;
+      }, THROTTLE_MS - (now - lastUpdate.current));
+    }
+    return () => {
+      if (pending.current) {
+        clearTimeout(pending.current);
+        pending.current = null;
+      }
+    };
+  }, [text]);
+
+  return (
+    <div className="text-foreground streaming-cursor text-sm leading-relaxed">
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+        {rendered}
+      </ReactMarkdown>
     </div>
   );
 }
@@ -100,16 +230,13 @@ export function ChatMessage({
 
             const isLastText = !isUser && isStreaming && i === lastTextIndex;
 
-            // During active streaming, render plain text with whitespace
-            // to avoid expensive markdown re-parsing on every token
             if (isLastText) {
               return (
-                <div
+                <StreamingMarkdown
                   key={i}
-                  className="text-foreground streaming-cursor whitespace-pre-wrap text-sm leading-relaxed"
-                >
-                  {part.text}
-                </div>
+                  text={part.text}
+                  components={markdownComponents}
+                />
               );
             }
 
@@ -120,100 +247,7 @@ export function ChatMessage({
               >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  components={{
-                    p: ({ children }) => (
-                      <p className="mb-3 last:mb-0">{children}</p>
-                    ),
-                    strong: ({ children }) => (
-                      <strong className="text-foreground font-semibold">
-                        {children}
-                      </strong>
-                    ),
-                    h1: ({ children }) => (
-                      <h1 className="font-heading mb-2 mt-4 text-base font-bold first:mt-0">
-                        {children}
-                      </h1>
-                    ),
-                    h2: ({ children }) => (
-                      <h2 className="font-heading mb-2 mt-4 text-sm font-bold first:mt-0">
-                        {children}
-                      </h2>
-                    ),
-                    h3: ({ children }) => (
-                      <h3 className="font-heading mb-1.5 mt-3 text-sm font-semibold first:mt-0">
-                        {children}
-                      </h3>
-                    ),
-                    ul: ({ children }) => (
-                      <ul className="mb-3 ml-4 list-disc space-y-1 last:mb-0">
-                        {children}
-                      </ul>
-                    ),
-                    ol: ({ children }) => (
-                      <ol className="mb-3 ml-4 list-decimal space-y-1 last:mb-0">
-                        {children}
-                      </ol>
-                    ),
-                    li: ({ children }) => (
-                      <li className="text-sm leading-relaxed">{children}</li>
-                    ),
-                    table: ({ children }) => (
-                      <div className="border-border/50 my-3 overflow-x-auto rounded-lg border">
-                        <table className="w-full text-sm">{children}</table>
-                      </div>
-                    ),
-                    thead: ({ children }) => (
-                      <thead className="bg-muted/50 border-border/50 border-b">
-                        {children}
-                      </thead>
-                    ),
-                    tbody: ({ children }) => (
-                      <tbody className="divide-border/30 divide-y">
-                        {children}
-                      </tbody>
-                    ),
-                    tr: ({ children }) => <tr>{children}</tr>,
-                    th: ({ children }) => (
-                      <th className="text-muted-foreground whitespace-nowrap px-3 py-2 text-left text-xs font-semibold">
-                        {children}
-                      </th>
-                    ),
-                    td: ({ children }) => (
-                      <td className="px-3 py-2 text-sm">{children}</td>
-                    ),
-                    code: ({ children, className }) => {
-                      const isInline = !className;
-                      if (isInline) {
-                        return (
-                          <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">
-                            {children}
-                          </code>
-                        );
-                      }
-                      const language = className?.replace("language-", "") || "";
-                      const codeString = String(children).replace(/\n$/, "");
-                      return <CodeBlock language={language} code={codeString} />;
-                    },
-                    pre: ({ children }) => <>{children}</>,
-                    hr: () => (
-                      <hr className="border-border/50 my-4" />
-                    ),
-                    a: ({ href, children }) => (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:text-primary/80 underline decoration-primary/30 underline-offset-2 transition-colors hover:decoration-primary/60"
-                      >
-                        {children}
-                      </a>
-                    ),
-                    blockquote: ({ children }) => (
-                      <blockquote className="border-primary/30 my-3 border-l-2 pl-3 text-sm italic">
-                        {children}
-                      </blockquote>
-                    ),
-                  }}
+                  components={markdownComponents}
                 >
                   {part.text}
                 </ReactMarkdown>
